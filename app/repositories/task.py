@@ -16,8 +16,8 @@ class TaskRepository:
     def get_by_id(self, task_id:str) -> TaskORM:
         return self.db.get(TaskORM, task_id)
     
-    def create(self, title: str) -> TaskORM:
-            new_task = TaskORM(title=title, completed=False)
+    def create(self, title: str, description: str | None) -> TaskORM:
+            new_task = TaskORM(title=title, description=description, completed=False)
             self.db.add(new_task)
             return new_task           
 

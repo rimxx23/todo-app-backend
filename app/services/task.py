@@ -17,7 +17,7 @@ class TaskService:
         return [TaskSchema.model_validate(task) for task in tasks_orm]
 
     def create_task(self, task_create: TaskCreateSchema) -> TaskSchema:
-        task_orm = self.task_repository.create(title=task_create.title)
+        task_orm = self.task_repository.create(title=task_create.title, description=task_create.description)
         self.db.commit()
         return TaskSchema.model_validate(task_orm)
 
@@ -29,6 +29,8 @@ class TaskService:
             task_for_update.title = task_update.title
         if task_update.completed is not None:
             task_for_update.completed = task_update.completed
+        if task_update.description is not None:
+            task_for_update.description = task_update.description
     
         self.db.commit()
         return TaskSchema.model_validate(task_for_update)
