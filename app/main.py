@@ -5,9 +5,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.models.base import Base
 from app.db.session import engine
+from app.core.config import get_settings
 
 from app.api.routers.task import router as task_router
 
+settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
@@ -21,6 +23,6 @@ app.include_router(router=task_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=settings.CORS_ALLOWED_ORIGIN,
     allow_methods=["*"],
 )
