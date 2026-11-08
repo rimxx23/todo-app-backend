@@ -1,6 +1,7 @@
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import  Mapped, mapped_column
 
-from .base import Base
+from app.models.base import Base
 
 
 class TaskORM(Base):
@@ -10,3 +11,5 @@ class TaskORM(Base):
     completed: Mapped[bool] = mapped_column(default=False)
 
     description: Mapped[str | None] 
+
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
