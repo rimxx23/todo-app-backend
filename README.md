@@ -1,22 +1,103 @@
-## Стек
+# Todo App Backend
 
-- FastAPI
-- SQLAlchemy
-- Pydantic
-- PostgreSQL
+A REST API for managing tasks, built with FastAPI.
+Each user can create and manage only their own tasks.
 
+## Features
 
-## Структура проекта
+- User registration and login with JWT authentication
+- Passwords are hashed with argon2
+- Each user can see and edit only their own tasks
+- Layered architecture: router → service → repository
+- Async database access with SQLAlchemy
+- Database migrations with Alembic
+- 17 tests (unit and integration) on a separate test database
+- Runs with one command using Docker Compose
+
+## Tech stack
+
+- Python, FastAPI
+- PostgreSQL, SQLAlchemy (async), Alembic
+- Pydantic, pydantic-settings
+- JWT (PyJWT), pwdlib (argon2)
+- Docker, Docker Compose
+- pytest, pytest-asyncio, httpx
+
+## API endpoints
+
+| Method | Path | Description | Auth |
+|--------|------|-------------|------|
+| POST | `/auth/register` | Create a new user | — |
+| POST | `/auth/login` | Get an access token | — |
+| GET | `/auth/me` | Get the current user | ✅ |
+| GET | `/tasks` | List your tasks | ✅ |
+| POST | `/tasks` | Create a task | ✅ |
+| PATCH | `/tasks/{task_id}` | Update a task | ✅ |
+| DELETE | `/tasks/{task_id}` | Delete a task | ✅ |
+
+Interactive documentation is available at http://localhost:8000/docs after the start.
+
+## Getting started
+
+1. Clone the repository and go to the project folder.
+
+2. Create a `.env` file from the example and fill in your values:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Generate a secret key for `SECRET_KEY`:
+
+   ```bash
+   openssl rand -hex 32
+   ```
+
+3. Start the app and the database:
+
+   ```bash
+   docker compose up --build
+   ```
+
+   Migrations are applied automatically on start.
+
+4. Open http://localhost:8000/docs
+
+## Running tests
+
+Tests use a separate database `todo_test`, so your data is not touched.
+
+1. Create the test database (only once):
+
+   ```bash
+   docker compose exec db createdb -U <POSTGRES_USER> todo_test
+   ```
+
+2. Install dependencies and run the tests:
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   pytest -v
+   ```
+
+## Project structure
 
 ```text
 todo-app-backend/
 ├── app/
-│   ├── api/
-│   ├── core/
-│   ├── db/
-│   ├── models/
-│   ├── repositories/
-│   ├── schemas/
-│   └── services/
-└── README.md
+│   ├── api/            # routers and dependencies
+│   ├── core/           # settings and security (hashing, JWT)
+│   ├── db/             # database session
+│   ├── models/         # SQLAlchemy models
+│   ├── repositories/   # database queries
+│   ├── schemas/        # Pydantic schemas
+│   ├── services/       # business logic
+│   └── main.py
+├── alembic/            # database migrations
+├── tests/              # pytest tests
+├── docker-compose.yml
+├── Dockerfile
+└── requirements.txt
 ```
