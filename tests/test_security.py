@@ -8,6 +8,15 @@ from app.core.config import get_settings
 
 settings = get_settings()
 
+
+@pytest.fixture
+def user_id():
+    return "user-5"
+
+@pytest.fixture
+def token(user_id):
+    return create_access_token(user_id=user_id)
+
 def test_hash_password_returns_different_hashes():
     password = "password"
 
@@ -32,24 +41,16 @@ def test_verify_password_wrong():
     result = verify_password(password=password1, hashed_password=hash)
     assert result is False
 
-def test_token_roundtrip():
-    user_id = "user-5"
-
-    token = create_access_token(user_id=user_id)
+def test_token_roundtrip(user_id, token):
     decode_token = decode_access_token(token=token)
 
     assert user_id == decode_token
 
-def test_decode_forged_token():
-    user_id = "user-5"
-
-    token = create_access_token(user_id=user_id)
+def test_decode_forged_token(token):
     with pytest.raises(jwt.InvalidSignatureError):
         decode_access_token(token=token+"x")
 
-def test_decode_expired_token():
-    user_id = "user-5"
-
+def test_decode_expired_token(user_id):
     payload = {"sub": user_id, "exp": datetime.now(timezone.utc) - timedelta(minutes=1)}
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     with pytest.raises(jwt.ExpiredSignatureError):
