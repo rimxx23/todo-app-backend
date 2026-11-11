@@ -13,6 +13,7 @@ Each user can create and manage only their own tasks.
 - Database migrations with Alembic
 - 17 tests (unit and integration) on a separate test database
 - Runs with one command using Docker Compose
+- Simple web frontend (HTML + JavaScript, no build step)
 
 ## Tech stack
 
@@ -63,6 +64,15 @@ Interactive documentation is available at http://localhost:8000/docs after the s
 
 4. Open http://localhost:8000/docs
 
+5. (Optional) Start the frontend in a new terminal:
+
+   ```bash
+   python3 -m http.server 3001 --directory frontend
+   ```
+
+   Open http://localhost:3001 — use exactly this address,
+   because CORS allows only the origins listed in `CORS_ALLOWED_ORIGIN`.
+
 ## Running tests
 
 Tests use a separate database `todo_test`, so your data is not touched.
@@ -96,6 +106,7 @@ todo-app-backend/
 │   ├── services/       # business logic
 │   └── main.py
 ├── alembic/            # database migrations
+├── frontend/           # web interface (index.html)
 ├── tests/              # pytest tests
 ├── docker-compose.yml
 ├── Dockerfile
